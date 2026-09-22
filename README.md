@@ -14,10 +14,10 @@ The site has five sections, all inside that one file:
 
 | Address            | Page                                              |
 |--------------------|---------------------------------------------------|
-| `#/`               | Projects, the intro and the five-project register  |
+| `#/`               | About and contact, the front page (also `#/about`) |
+| `#/projects`       | The intro and the five-project register            |
 | `#/p/<name>`       | One project, e.g. `#/p/material-balance`           |
 | `#/experience`     | Summer jobs                                        |
-| `#/about`          | About and contact                                  |
 | `#/cv`             | Full CV, including the grade chart                 |
 
 Each of those is a real, linkable address. You can send someone

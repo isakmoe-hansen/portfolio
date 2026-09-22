@@ -338,7 +338,7 @@ body.editing .entry [data-edit]{pointer-events:auto}
 
 <div class="shell">
   <header class="masthead">
-    <a class="wordmark" id="wordmark" href="#/about"></a>
+    <a class="wordmark" id="wordmark" href="#/"></a>
     <nav id="nav" aria-label="Sections"></nav>
   </header>
 
@@ -873,7 +873,7 @@ function ed(path, tag, cls) {
 function renderNav(page) {
   $("#wordmark").innerHTML = '<span data-edit="site.wordmark">' + C.site.wordmark + "</span>";
   $("#nav").innerHTML = C.nav.map(function (n, i) {
-    const href = n.page === "work" ? "#/" : "#/" + n.page;
+    const href = n.page === "about" ? "#/" : n.page === "work" ? "#/projects" : "#/" + n.page;
     const on = (page === n.page || (page === "project" && n.page === "work"))
       ? ' aria-current="page"' : "";
     return '<a href="' + href + '"' + on + '><span data-edit="nav.' + i + '.label">' + n.label + "</span></a>";
@@ -997,7 +997,7 @@ function pageProject(slug) {
   const next = C.projects[i + 1];
 
   return '<article>' +
-    '<a class="back" href="#/">← All projects</a>' +
+    '<a class="back" href="#/projects">← All projects</a>' +
     '<header class="project-head">' +
       '<span class="eyebrow">Project <span data-edit="projects.' + i + '.num">' + p.num +
         '</span> — <span data-edit="projects.' + i + '.kicker">' + p.kicker + "</span></span>" +
@@ -1246,12 +1246,14 @@ function route() {
     else   { html = pageWork(); }
   } else if (hash === "experience") {
     page = "experience"; html = pageExperience(); title = C.experience.title + " — " + C.site.name;
-  } else if (hash === "about") {
-    page = "about"; html = pageAbout(); title = C.about.title + " — " + C.site.name;
+  } else if (hash === "projects") {
+    html = pageWork(); title = "Projects — " + C.site.name;
   } else if (hash === "cv") {
     page = "cv"; html = pageCV(); title = C.cv.title + " — " + C.site.name;
   } else {
-    html = pageWork();
+    // the front page (and #/about, and any unknown address) is About
+    page = "about"; html = pageAbout();
+    if (hash === "about") title = C.about.title + " — " + C.site.name;
   }
 
   main.innerHTML = html;
