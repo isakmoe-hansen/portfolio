@@ -29,8 +29,8 @@ Each of those is a real, linkable address. You can send someone
 
 ### Option A — click and type in the browser
 
-1. Open the site and add `?edit` to the address: `index.html?edit`
-   (or press **Ctrl/Cmd + Shift + E** at any time).
+1. Open the site and add `?edit` to the address: `index.html?edit`.
+   Without `?edit` there is no edit bar, so visitors never see it.
 2. Every editable piece of text gets a dashed outline. Click one and type.
 3. Press **Download**.
 4. Move the downloaded `index.html` into this folder, replacing the old one.
