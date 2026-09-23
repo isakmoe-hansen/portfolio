@@ -229,6 +229,22 @@ figcaption b{color:var(--ink);font-weight:500}
 .chart-legend i{width:1.1rem;height:0;border-top:1.5px solid var(--ink);display:inline-block}
 .chart-legend i.dash{border-top:1px dashed var(--accent)}
 .chart-legend i.band{height:.6rem;border:1px solid var(--rule);background:var(--wash)}
+.chart{position:relative}
+.chart .guide{stroke:var(--ink);stroke-width:1;stroke-dasharray:2 3;opacity:0;transition:opacity 120ms ease}
+.chart .dot{transition:r 120ms ease}
+.chart .dot.on{r:5}
+.chart-tip{
+  position:absolute;top:0;left:0;pointer-events:none;opacity:0;transition:opacity 120ms ease;
+  background:var(--accent);color:var(--paper);padding:.45rem .65rem;border-radius:4px;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;line-height:1.5;white-space:nowrap;
+}
+.chart-tip b{font-weight:600;text-transform:uppercase;letter-spacing:.07em}
+.chart.hovering .guide,.chart.hovering .chart-tip{opacity:1}
+/* entrance: hidden until the chart scrolls into view, then drawn left to right */
+.chart.pre .band,.chart.pre .grid,.chart.pre .tick{opacity:0}
+.chart .band,.chart .grid,.chart .tick{transition:opacity 600ms ease}
+.chart .dot{transition:opacity 250ms ease,r 120ms ease}
+.chart .dot.hide{opacity:0}
 .toggle{
   font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
   background:none;border:1px solid var(--accent);color:var(--accent);
@@ -1194,8 +1210,12 @@ function renderChart() {
   const path = function (key) {
     return d.map(function (p, i) { return (i ? "L" : "M") + x(i) + " " + y(p[key]); }).join(" ");
   };
+  svg += '<clipPath id="chart-clip"><rect x="0" y="0" width="' + W + '" height="' + H + '"></rect></clipPath>';
+  svg += '<line class="guide" x1="0" y1="' + T + '" x2="0" y2="' + (T + ih) + '"></line>';
+  svg += '<g clip-path="url(#chart-clip)">';
   svg += '<path class="avgline" d="' + path("cum") + '"></path>';
   svg += '<path class="line" d="' + path("avg") + '"></path>';
+  svg += "</g>";
   d.forEach(function (p, i) {
     svg += '<circle class="dot" cx="' + x(i) + '" cy="' + y(p.avg) + '" r="3.4"></circle>';
     svg += '<text class="tick" x="' + x(i) + '" y="' + (H - 10) + '" text-anchor="middle">' + p.label + "</text>";
@@ -1226,12 +1246,143 @@ function renderChart() {
       }).join("") +
     "</tbody></table></div></div>";
 
+  host.insertAdjacentHTML("afterbegin", '<div class="chart-tip" aria-hidden="true"></div>');
+  chartHover(host, d, x, y, W);
+  chartReveal(host, d, x, W);
+
   const btn = $("#tbl-toggle"), box = $("#tbl-data");
   btn.addEventListener("click", function () {
     const open = box.hasAttribute("hidden");
     if (open) { box.removeAttribute("hidden"); } else { box.setAttribute("hidden", ""); }
     btn.setAttribute("aria-expanded", String(open));
     btn.textContent = open ? C.cv.tableHide : C.cv.tableShow;
+  });
+}
+
+/* ---------------------------------------------------------------------
+   Motion — the chart draws itself and the headline numbers count up
+   when they scroll into view. Skipped for reduced motion and edit mode.
+   --------------------------------------------------------------------- */
+const CALM = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let seen = null;
+
+function onVisible(el, fn) {
+  if (CALM || !("IntersectionObserver" in window)) { fn(); return; }
+  if (!seen) {
+    seen = new IntersectionObserver(function (list) {
+      list.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        seen.unobserve(e.target);
+        const f = e.target._onVisible; e.target._onVisible = null;
+        if (f) f();
+      });
+    }, { threshold: 0.35 });
+  }
+  el._onVisible = fn;
+  seen.observe(el);
+}
+
+function tween(ms, step, done) {
+  const t0 = performance.now();
+  (function frame(now) {
+    const t = Math.min(1, (now - t0) / ms);
+    step(1 - Math.pow(1 - t, 3));                  // ease-out cubic
+    if (t < 1) requestAnimationFrame(frame); else if (done) done();
+  })(t0);
+}
+
+function chartReveal(host, d, x, W) {
+  if (CALM || document.body.classList.contains("editing")) return;
+  const rect = host.querySelector("#chart-clip rect");
+  const dots = host.querySelectorAll(".dot");
+  host.classList.add("pre");
+  rect.setAttribute("width", "0");
+  dots.forEach(function (c) { c.classList.add("hide"); });
+  onVisible(host, function () {
+    host.classList.remove("pre");
+    tween(1600, function (k) {
+      const edge = W * k;
+      rect.setAttribute("width", String(edge));
+      dots.forEach(function (c, i) { if (x(i) <= edge + 2) c.classList.remove("hide"); });
+    }, function () { dots.forEach(function (c) { c.classList.remove("hide"); }); });
+  });
+}
+
+function chartHover(host, d, x, y, W) {
+  const svg = host.querySelector("svg"), tip = host.querySelector(".chart-tip");
+  const guide = svg.querySelector(".guide"), dots = svg.querySelectorAll(".dot");
+  let at = -1;
+  function show(i) {
+    if (i === at) return;
+    at = i;
+    const p = d[i], gx = String(x(i));
+    guide.setAttribute("x1", gx); guide.setAttribute("x2", gx);
+    dots.forEach(function (c, j) { c.classList.toggle("on", j === i); });
+    tip.innerHTML = "<b>" + p.term + " " + p.year + "</b><br>" +
+      "Semester " + p.avg.toFixed(2) + " (" + LETTER[Math.round(p.avg)] + ")<br>" +
+      "Cumulative " + p.cum.toFixed(2) + "<br>" + p.n + (p.n === 1 ? " course" : " courses");
+    const box = svg.getBoundingClientRect(), s = box.width / W;
+    const px = x(i) * s, py = y(p.avg) * (box.height / svg.viewBox.baseVal.height);
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = px + 12;
+    if (left + tw > box.width) left = px - tw - 12;
+    tip.style.transform = "translate(" + Math.max(0, left) + "px," + Math.max(0, py - th / 2) + "px)";
+  }
+  svg.addEventListener("pointermove", function (e) {
+    const box = svg.getBoundingClientRect();
+    const vx = (e.clientX - box.left) * (W / box.width);
+    let best = 0;
+    d.forEach(function (_, i) { if (Math.abs(x(i) - vx) < Math.abs(x(best) - vx)) best = i; });
+    host.classList.add("hovering");
+    show(best);
+  });
+  function hide() {
+    host.classList.remove("hovering");
+    dots.forEach(function (c) { c.classList.remove("on"); });
+    at = -1;
+  }
+  // a tap on a phone keeps the label up until the next tap elsewhere
+  svg.addEventListener("pointerleave", function (e) { if (e.pointerType !== "touch") hide(); });
+  document.addEventListener("pointerdown", function (e) { if (!svg.contains(e.target)) hide(); });
+}
+
+/* Count every number inside el up from zero, then restore the exact
+   original markup so edit mode never saves an in-between value. */
+function countUp(el) {
+  const html = el.innerHTML, nodes = [];
+  const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  while (walk.nextNode()) {
+    const n = walk.currentNode, parts = [];
+    n.nodeValue.replace(/\d+(?:\.\d+)?/g, function (m) { parts.push(m); return m; });
+    if (parts.length) nodes.push({ n: n, src: n.nodeValue });
+  }
+  if (!nodes.length) return;
+  el._countDone = function () { el.innerHTML = html; el._countDone = null; };
+  const draw = function (k) {
+    nodes.forEach(function (o) {
+      o.n.nodeValue = o.src.replace(/\d+(?:\.\d+)?/g, function (m) {
+        const dec = (m.split(".")[1] || "").length;
+        return (parseFloat(m) * k).toFixed(dec);
+      });
+    });
+  };
+  draw(0);
+  onVisible(el, function () {
+    tween(1300, function (k) { if (el._countDone) draw(k); }, function () { if (el._countDone) el._countDone(); });
+  });
+}
+
+function animateNumbers() {
+  if (CALM || document.body.classList.contains("editing")) return;
+  $$(".entry-num > [data-edit], .stat-val").forEach(countUp);
+}
+
+function finishMotion() {
+  $$("[data-edit]").forEach(function (el) { if (el._countDone) el._countDone(); });
+  $$(".chart.pre").forEach(function (c) {
+    c.classList.remove("pre");
+    const r = c.querySelector("#chart-clip rect"); if (r) r.setAttribute("width", "100%");
+    c.querySelectorAll(".dot").forEach(function (dot) { dot.classList.remove("hide"); });
   });
 }
 
@@ -1267,6 +1418,7 @@ function route() {
   renderNav(page);
   renderFoot();
   if (page === "cv") renderChart();
+  animateNumbers();
   if (document.body.classList.contains("editing")) armEditing();
   main.focus({ preventScroll: true });
   window.scrollTo(0, 0);
@@ -1336,7 +1488,7 @@ function download() {
 function toggleEdit(on) {
   const want = on === undefined ? !document.body.classList.contains("editing") : on;
   document.body.classList.toggle("editing", want);
-  if (want) { armEditing(); $("#edit-status").textContent = "Click any text and type."; }
+  if (want) { finishMotion(); armEditing(); $("#edit-status").textContent = "Click any text and type."; }
   else { disarmEditing(); }
 }
 
