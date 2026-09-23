@@ -67,19 +67,23 @@ body{
 /* ---------- masthead ------------------------------------- */
 .masthead{
   display:flex;flex-wrap:wrap;gap:1rem 2rem;
-  align-items:baseline;justify-content:space-between;
+  align-items:center;justify-content:space-between;
   padding:2.25rem 0 1.1rem;
   border-bottom:1px solid var(--ink);
   margin-bottom:3rem;
+  position:sticky;top:0;z-index:10;background:var(--paper);
 }
 .masthead .wordmark{
   font-size:1rem;letter-spacing:.09em;text-transform:uppercase;
   font-weight:600;text-decoration:none;color:var(--ink);
 }
-.masthead nav{display:flex;flex-wrap:wrap;gap:.5rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
-.masthead nav a{color:var(--ink);text-decoration:none;padding:.45rem .8rem;border:1px solid var(--ink);transition:background-color 140ms ease,color 140ms ease}
-.masthead nav a:hover{background:var(--wash)}
-.masthead nav a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.masthead nav{display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;font-size:.98rem}
+.masthead nav a{color:var(--ink);text-decoration:none;text-underline-offset:.3em;text-decoration-thickness:1px}
+.masthead nav a:hover{text-decoration-line:underline}
+.masthead nav a[aria-current="page"]{text-decoration-line:underline;text-decoration-thickness:2px}
+.masthead nav a:last-child{background:var(--accent);color:var(--paper);padding:.45rem 1rem;border-radius:4px;text-decoration:none;transition:background-color 200ms ease}
+.masthead nav a:last-child:hover{background:#000}
+.masthead nav a:last-child[aria-current="page"]{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--accent)}
 
 /* ---------- type ----------------------------------------- */
 h1{font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.14;font-weight:600;letter-spacing:-.012em;margin:0 0 .9rem;max-width:22ch}
@@ -318,7 +322,7 @@ body.editing .entry [data-edit]{pointer-events:auto}
   .entry-course{float:none;display:block;margin:0 0 .4rem;text-align:left;max-width:none}
   .cv-entry{grid-template-columns:1fr;gap:.35rem}
   .courses{column-count:1}
-  .masthead{padding-top:1.5rem}
+  .masthead{padding-top:1.5rem;position:static}
   .pager{flex-direction:column;gap:.7rem}
   .pager a:last-child{text-align:left}
 }
