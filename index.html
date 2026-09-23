@@ -424,12 +424,6 @@ figure img{border-radius:12px}
   <footer class="foot" id="foot"></footer>
 </div>
 
-<div class="editbar" role="region" aria-label="Edit mode">
-  <strong>Edit mode</strong>
-  <span class="grow" id="edit-status">Click any text and type.</span>
-  <button type="button" id="edit-download">Download</button>
-  <button type="button" id="edit-exit">Done</button>
-</div>
 <script>
 /* Embedded figures, referenced from project blocks by key ("src"). */
 const FIGS = {
@@ -445,8 +439,8 @@ const FIGS = {
 
    Everything between CONTENT:START and CONTENT:END is your content, and
    nothing else in this file is. Edit it here directly, or open the site
-   with ?edit (or press Ctrl/Cmd + Shift + E), click any text, type, and
-   press Download.
+   with ?edit, click any text, type, and press Download. Visitors never
+   see the edit bar: it is only built when ?edit is in the address.
    ========================================================================= */
 /* CONTENT:START */
 const CONTENT = {
@@ -1513,6 +1507,8 @@ function download() {
   const wasEditing = document.body.classList.contains("editing");
   disarmEditing();
   document.body.classList.remove("editing");
+  const bar = $(".editbar");
+  if (bar) bar.remove();                     // the saved file must not carry the edit bar
   const main = $("#main"), nav = $("#nav"), foot = $("#foot"), wm = $("#wordmark");
   const keep = [main.innerHTML, nav.innerHTML, foot.innerHTML, wm.innerHTML];
   main.innerHTML = ""; nav.innerHTML = ""; foot.innerHTML = ""; wm.innerHTML = "";
@@ -1521,6 +1517,7 @@ function download() {
 
   main.innerHTML = keep[0]; nav.innerHTML = keep[1];
   foot.innerHTML = keep[2]; wm.innerHTML = keep[3];
+  if (bar) document.body.appendChild(bar);
   if (wasEditing) { document.body.classList.add("editing"); armEditing(); }
 
   const block = "/* CONTENT:START */\nconst CONTENT = " +
@@ -1547,18 +1544,23 @@ function toggleEdit(on) {
   else { disarmEditing(); }
 }
 
-document.addEventListener("keydown", function (e) {
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "E" || e.key === "e")) {
-    e.preventDefault(); toggleEdit();
-  }
-});
-
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 window.addEventListener("hashchange", route);
 route();
-$("#edit-download").addEventListener("click", download);
-$("#edit-exit").addEventListener("click", function () { toggleEdit(false); });
-if (/(^|[?&])edit($|[=&])/.test(location.search)) toggleEdit(true);
+/* The edit bar exists only when the address carries ?edit, so the public
+   page has no editing controls or text in it at all. */
+if (/(^|[?&])edit($|[=&])/.test(location.search)) {
+  document.body.insertAdjacentHTML("beforeend",
+    '<div class="editbar" role="region" aria-label="Edit mode">' +
+      "<strong>Edit mode</strong>" +
+      '<span class="grow" id="edit-status">Click any text and type.</span>' +
+      '<button type="button" id="edit-download">Download</button>' +
+      '<button type="button" id="edit-exit">Done</button>' +
+    "</div>");
+  $("#edit-download").addEventListener("click", download);
+  $("#edit-exit").addEventListener("click", function () { toggleEdit(false); });
+  toggleEdit(true);
+}
 </script>
 </body>
 </html>
