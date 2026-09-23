@@ -76,10 +76,10 @@ body{
   font-size:1rem;letter-spacing:.09em;text-transform:uppercase;
   font-weight:600;text-decoration:none;color:var(--ink);
 }
-.masthead nav{display:flex;gap:1.4rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase}
-.masthead nav a{color:var(--ink);text-decoration:none;padding:.3rem 0;border-bottom:1px solid transparent;transition:border-color 140ms ease,color 140ms ease}
-.masthead nav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
-.masthead nav a[aria-current="page"]{border-bottom:2px solid var(--ink)}
+.masthead nav{display:flex;flex-wrap:wrap;gap:.5rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+.masthead nav a{color:var(--ink);text-decoration:none;padding:.45rem .8rem;border:1px solid var(--ink);transition:background-color 140ms ease,color 140ms ease}
+.masthead nav a:hover{background:var(--wash)}
+.masthead nav a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
 
 /* ---------- type ----------------------------------------- */
 h1{font-size:clamp(2rem,4.6vw,2.9rem);line-height:1.14;font-weight:600;letter-spacing:-.012em;margin:0 0 .9rem;max-width:22ch}
