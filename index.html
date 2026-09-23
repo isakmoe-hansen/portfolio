@@ -56,6 +56,7 @@ html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 
 body{
   margin:0;
+  min-height:100vh;display:flex;flex-direction:column;
   background:var(--paper);
   color:var(--ink);
   font-family:var(--serif);
@@ -68,7 +69,7 @@ body{
 .skip:focus{left:var(--gutter);top:.5rem;z-index:20;background:var(--ink);color:var(--paper);padding:.6rem 1rem;font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em}
 
 /* ---------- shell ---------------------------------------- */
-.shell{max-width:60rem;margin:0 auto;padding:0 var(--gutter) 6rem}
+.shell{max-width:60rem;width:100%;margin:0 auto;padding:0 var(--gutter) 6rem;flex:1 0 auto}
 
 /* ---------- masthead ------------------------------------- */
 .masthead{
@@ -318,9 +319,37 @@ figcaption b{color:var(--ink);font-weight:500}
 .pager a:last-child{text-align:right}
 
 /* ---------- footer ---------------------------------------- */
-.foot{margin-top:5rem;padding-top:1.2rem;border-top:1px solid var(--ink);display:flex;flex-wrap:wrap;gap:.5rem 2rem;justify-content:space-between;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:var(--muted)}
-.foot a{color:var(--muted)}
-.foot a:hover{color:var(--ink)}
+/* Full-width dark band, its content lined up with the page column. */
+.foot{
+  --edge:max(var(--gutter),calc((100% - 60rem) / 2 + var(--gutter)));
+  background:#141413;color:#B0AEA5;
+  padding:4.5rem var(--edge) 2.5rem;
+  font-family:var(--sans);font-size:.95rem;
+}
+.foot a{color:#FAF9F5;text-decoration:none}
+.foot a:hover{text-decoration:underline;text-decoration-color:#FAF9F5}
+.foot-inner{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:2.5rem 2rem}
+.foot-mark{
+  font-family:var(--serif);font-size:1.5rem;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;line-height:1.2;
+}
+.foot-mark:hover{text-decoration:none}
+.foot-place{margin:.7rem 0 0;color:#B0AEA5}
+.foot-col h2{font-family:var(--sans);font-size:.95rem;font-weight:600;color:#FAF9F5;margin:0 0 1rem;letter-spacing:0;word-spacing:0}
+.foot-col ul{list-style:none;padding:0;margin:0}
+.foot-col li{margin:0 0 .65rem}
+.foot-col a{color:#B0AEA5;overflow-wrap:anywhere}
+.foot-col a:hover{color:#FAF9F5}
+.foot-base{
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 2rem;
+  margin-top:4rem;padding-top:1.4rem;border-top:1px solid #3D3D3A;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;color:#87867F;
+}
+.foot a:focus-visible{outline-color:#FAF9F5}
+@media (max-width:46rem){
+  .foot{padding-top:3rem}
+  .foot-inner{grid-template-columns:1fr}
+}
 
 /* ---------- accessibility & motion ------------------------ */
 a:focus-visible,.entry:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -380,7 +409,7 @@ figure img{border-radius:12px}
 .toggle,.btn{border-radius:8px}
 .tbl tr.pick td:first-child{box-shadow:inset 2px 0 0 var(--blue)}
 .result{border-left-color:var(--blue)}
-.files,.foot{border-top-color:var(--rule)}
+.files{border-top-color:var(--rule)}
 .pager{border-top-color:var(--rule)}
 
 /* ---------- responsive ------------------------------------ */
@@ -407,6 +436,9 @@ figure img{border-radius:12px}
   .shell{max-width:none;padding:0}
   a{color:var(--ink);text-decoration:none}
   .cv-entry,.entry{break-inside:avoid}
+  .foot{background:none;color:var(--muted);padding:1rem 0 0}
+  .foot-inner{display:none}
+  .foot a{color:var(--ink)}
 }
 </style>
 </head>
@@ -421,8 +453,8 @@ figure img{border-radius:12px}
 
   <main id="main" tabindex="-1"></main>
 
-  <footer class="foot" id="foot"></footer>
 </div>
+<footer class="foot" id="foot"></footer>
 
 <script>
 /* Embedded figures, referenced from project blocks by key ("src"). */
@@ -928,20 +960,36 @@ function ed(path, tag, cls) {
 function renderNav(page) {
   $("#wordmark").innerHTML = '<span data-edit="site.wordmark">' + C.site.wordmark + "</span>";
   $("#nav").innerHTML = C.nav.map(function (n, i) {
-    const href = n.page === "about" ? "#/" : n.page === "work" ? "#/projects" : "#/" + n.page;
+    const href = navHref(n.page);
     const on = (page === n.page || (page === "project" && n.page === "work"))
       ? ' aria-current="page"' : "";
     return '<a href="' + href + '"' + on + '><span data-edit="nav.' + i + '.label">' + n.label + "</span></a>";
   }).join("");
 }
 
+function navHref(page) {
+  return page === "about" ? "#/" : page === "work" ? "#/projects" : "#/" + page;
+}
+
 function renderFoot() {
   const s = C.site;
   $("#foot").innerHTML =
-    '<span>' + ed("site.name") + ", " + ed("site.place") + "</span>" +
-    '<span><a href="mailto:' + s.email + '">' + s.email + "</a></span>" +
-    '<span><a href="' + s.linkedin + '">' + s.linkedinLabel + "</a></span>" +
-    "<span>" + ed("site.updated") + "</span>";
+    '<div class="foot-inner">' +
+      '<div class="foot-brand">' +
+        '<a class="foot-mark" href="#/">' + s.wordmark + "</a>" +
+        '<p class="foot-place">' + ed("site.place") + "</p>" +
+      "</div>" +
+      '<div class="foot-col"><h2>Pages</h2><ul>' +
+        C.nav.map(function (n) {
+          return '<li><a href="' + navHref(n.page) + '">' + n.label + "</a></li>";
+        }).join("") +
+      "</ul></div>" +
+      '<div class="foot-col"><h2>Contact</h2><ul>' +
+        '<li><a href="mailto:' + s.email + '">' + s.email + "</a></li>" +
+        '<li><a href="' + s.linkedin + '">LinkedIn</a></li>' +
+      "</ul></div>" +
+    "</div>" +
+    '<div class="foot-base"><span>' + ed("site.name") + "</span>" + ed("site.updated") + "</div>";
 }
 
 /* ---------------------------------------------------------------------
