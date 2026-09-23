@@ -8,7 +8,7 @@
 <link rel="canonical" href="https://isakmoe-hansen.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://isakmoe-hansen.github.io/">
-<meta property="og:title" content="Isak Moe-Hansen — Petroleum engineering student at NTNU">
+<meta property="og:title" content="About - Isak Moe-Hansen">
 <meta property="og:description" content="Five projects in drilling, reservoir and field development. Looking for a summer 2027 internship.">
 <meta property="og:image" content="https://isakmoe-hansen.github.io/assets/og-card.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -1487,25 +1487,26 @@ function finishMotion() {
 function route() {
   const hash = location.hash.replace(/^#\/?/, "");
   const main = $("#main");
-  let page = "work", html, title = C.index.title;
+  // every tab reads "<Page> - Isak Moe-Hansen"
+  const tab = function (label) { return label + " - " + C.site.name; };
+  let page = "work", html, title;
 
   if (hash.indexOf("p/") === 0) {
     const slug = hash.slice(2);
     const p = C.projects.find(function (q) { return q.slug === slug; });
-    if (p) { page = "project"; html = pageProject(slug); title = p.title + " — " + C.site.name; }
-    else   { html = pageWork(); }
+    if (p) { page = "project"; html = pageProject(slug); title = tab(p.title); }
+    else   { html = pageWork(); title = tab("Projects"); }
   } else if (hash === "experience") {
-    page = "experience"; html = pageExperience(); title = C.experience.title + " — " + C.site.name;
+    page = "experience"; html = pageExperience(); title = tab(C.experience.title);
   } else if (hash === "projects") {
-    html = pageWork(); title = "Projects — " + C.site.name;
+    html = pageWork(); title = tab("Projects");
   } else if (hash === "contact") {
-    page = "contact"; html = pageContact(); title = C.contact.title + " — " + C.site.name;
+    page = "contact"; html = pageContact(); title = tab(C.contact.title);
   } else if (hash === "cv") {
-    page = "cv"; html = pageCV(); title = C.cv.title + " — " + C.site.name;
+    page = "cv"; html = pageCV(); title = tab(C.cv.title);
   } else {
     // the front page (and #/about, and any unknown address) is About
-    page = "about"; html = pageAbout();
-    if (hash === "about") title = C.about.title + " — " + C.site.name;
+    page = "about"; html = pageAbout(); title = tab(C.about.title);
   }
 
   main.innerHTML = html;
