@@ -457,8 +457,6 @@ const CONTENT = {
     "place": "Trondheim, Norway",
     "updated": "Updated September 2026",
     "email": "moehansen.isak@gmail.com",
-    "github": "https://github.com/isakmoe-hansen",
-    "githubLabel": "github.com/isakmoe-hansen",
     "linkedin": "https://www.linkedin.com/in/isak-moe-hansen-2766b857",
     "linkedinLabel": "linkedin.com/in/isak-moe-hansen",
     "portrait": "assets/portrait.jpg",
@@ -637,7 +635,6 @@ const CONTENT = {
       "meta": "PYTHON · LLM-ASSISTED",
       "lede": "An interactive command-line tool that calculates the safe mud weight window for a well, recommends a drilling fluid type, and uses the Anthropic Claude API to deliver petroleum-engineering reasoning in the terminal of your chosen editor.",
       "spec": [
-        {"dt": "Repository", "dd": "<a href=\"https://github.com/isakmoe-hansen/drilling-advisor\">github.com/isakmoe-hansen/drilling-advisor</a>"},
         {"dt": "Units", "dd": "Metres, °C, specific gravity, bar"},
         {"dt": "Tools", "dd": "Python 3.10+, Anthropic Claude API"}
       ],
@@ -655,9 +652,7 @@ const CONTENT = {
         {"t": "p", "v": "This project was built to explore how large language models can augment traditional engineering workflows."},
         {"t": "note", "v": "Personal project, 2026."}
       ],
-      "files": [
-        {"label": "Source on GitHub", "href": "https://github.com/isakmoe-hansen/drilling-advisor", "size": "Python"}
-      ]
+      "files": []
     },
 
     {
@@ -674,7 +669,6 @@ const CONTENT = {
       "meta": "LAS FILES · PYTHON",
       "lede": "Object-oriented Python project for borehole log alignment based on clustering of gamma-ray values and depth-shift correlation.",
       "spec": [
-        {"dt": "Repository", "dd": "<a href=\"https://github.com/isakmoe-hansen/borehole-log-alignment\">github.com/isakmoe-hansen/borehole-log-alignment</a>"},
         {"dt": "Data", "dd": "Well CL1, Candy Lane (USGS)"},
         {"dt": "Tools", "dd": "Python, NumPy, Matplotlib, lasio"}
       ],
@@ -689,9 +683,7 @@ const CONTENT = {
         {"t": "figs", "items": [{"src": "la-alignment", "alt": "Two gamma-ray logs from 200 to 300 ft, before and after alignment. Before, log B is 25 ft out of place. After, the peaks of both logs line up.", "cap": "Log B moved 25 ft, before and after the estimated shift is applied (200–300 ft shown)."}]},
         {"t": "note", "v": "Personal project, 2025."}
       ],
-      "files": [
-        {"label": "Source on GitHub", "href": "https://github.com/isakmoe-hansen/borehole-log-alignment", "size": "Python"}
-      ]
+      "files": []
     }
   ],
 
@@ -860,22 +852,6 @@ const CONTENT = {
       }
     ],
 
-    "projectItemsTitle": "Technical projects",
-    "projectItems": [
-      {
-        "when": "Python",
-        "role": "Drilling Fluid Advisor",
-        "org": "<a href=\"https://github.com/isakmoe-hansen/drilling-advisor\">github.com/isakmoe-hansen/drilling-advisor</a>",
-        "bullets": []
-      },
-      {
-        "when": "Python",
-        "role": "Borehole Log Alignment",
-        "org": "<a href=\"https://github.com/isakmoe-hansen/borehole-log-alignment\">github.com/isakmoe-hansen/borehole-log-alignment</a>",
-        "bullets": []
-      }
-    ],
-
     "courseworkTitle": "Coursework",
     "coursework": [
       {
@@ -970,7 +946,6 @@ function renderFoot() {
   $("#foot").innerHTML =
     '<span>' + ed("site.name") + ", " + ed("site.place") + "</span>" +
     '<span><a href="mailto:' + s.email + '">' + s.email + "</a></span>" +
-    '<span><a href="' + s.github + '">' + s.githubLabel + "</a></span>" +
     '<span><a href="' + s.linkedin + '">' + s.linkedinLabel + "</a></span>" +
     "<span>" + ed("site.updated") + "</span>";
 }
@@ -1174,7 +1149,6 @@ function pageAbout() {
     ed("about.contactTitle", "h2") +
     '<ul class="filelist" style="gap:.6rem 2rem;margin-top:.8rem">' +
       '<li><a href="mailto:' + s.email + '">' + s.email + "</a></li>" +
-      '<li><a href="' + s.github + '">' + s.githubLabel + "</a></li>" +
       '<li><a href="' + s.linkedin + '">' + s.linkedinLabel + "</a></li>" +
     "</ul>" +
   "</article>";
@@ -1214,7 +1188,6 @@ function pageCV() {
 
     cvGroup(null, "cv.work", x.work) +
     cvGroup(null, "cv.involvement", x.involvement) +
-    cvGroup(null, "cv.projectItems", x.projectItems) +
 
     ed("cv.courseworkTitle", "h2") +
     '<div class="rule-top">' + x.coursework.map(function (g, i) {
