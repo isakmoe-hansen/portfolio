@@ -39,7 +39,7 @@
   --accent:#141413;
   --wash:#F0EEE6;
   --wash-2:#E8E6DC;
-  --clay:#D97757;
+  --blue:#0E5499;
   --radius:16px;
 
   --serif:"Source Serif 4","Iowan Old Style",Georgia,serif;
@@ -346,24 +346,22 @@ body.editing .entry{pointer-events:none}
 body.editing .entry [data-edit]{pointer-events:auto}
 
 /* ---------- look: ivory, sans headlines, rounded cards ------ */
-h1,h2,h3,.wordmark,.masthead nav,.entry-title,.entry-num,.stat-val,.cv-role,.contact-val{font-family:var(--sans)}
-h1,h2,h3,.entry-title,.cv-role{word-spacing:.06em}
-h1{font-size:clamp(2.4rem,5.6vw,3.6rem);line-height:1.05;letter-spacing:-.02em;font-weight:600;margin-bottom:1.1rem}
+h2,h3,.masthead nav,.entry-title,.entry-num,.stat-val,.cv-role,.contact-val{font-family:var(--sans)}
+h2,h3,.entry-title,.cv-role{word-spacing:.06em}
 h2{font-size:1.55rem;letter-spacing:-.01em;line-height:1.2}
 h3{letter-spacing:0}
 .entry-title{font-size:1.35rem;letter-spacing:-.005em}
 .entry-num{letter-spacing:-.03em;font-feature-settings:"tnum" 1}
 .cv-role{font-size:1.1rem;letter-spacing:0}
 .masthead{border-bottom-color:var(--rule)}
-.masthead .wordmark{letter-spacing:.02em;text-transform:none;font-size:1.1rem}
-.masthead nav a[aria-current="page"]{text-decoration-color:var(--clay)}
+.masthead nav a[aria-current="page"]{text-decoration-color:var(--blue)}
 .masthead nav a:last-child{border-radius:8px}
 .masthead nav a:last-child:hover{background:#3D3D3A}
-a:hover{text-decoration-color:var(--clay)}
+a:hover{text-decoration-color:var(--blue)}
 
 /* cards */
 .register-group{border-bottom:0;padding-bottom:.9rem}
-.register-group::before{content:"";display:inline-block;width:.5rem;height:.5rem;border-radius:50%;background:var(--clay);margin-right:.6rem;vertical-align:.05rem}
+.register-group::before{content:"";display:inline-block;width:.5rem;height:.5rem;border-radius:50%;background:var(--blue);margin-right:.6rem;vertical-align:.05rem}
 .entry{background:var(--wash);border:0;border-radius:var(--radius);padding:2rem 2.2rem;margin-bottom:1rem;transition:background 200ms ease,transform 200ms ease}
 .entry:hover{background:var(--wash-2);transform:translateY(-2px)}
 .entry-more{border-radius:8px;border-color:var(--ink);color:var(--ink)}
@@ -375,13 +373,13 @@ a:hover{text-decoration-color:var(--clay)}
 .contact-row:hover{background:var(--wash-2)}
 .eqblock,.terminal{border:0;border-radius:12px}
 figure img{border-radius:12px}
-.chart .line{stroke:var(--clay);stroke-width:2}
-.chart .dot{stroke:var(--clay)}
-.chart-legend i{border-top-color:var(--clay);border-top-width:2px}
+.chart .line{stroke:var(--blue);stroke-width:2}
+.chart .dot{stroke:var(--blue)}
+.chart-legend i{border-top-color:var(--blue);border-top-width:2px}
 .chart-tip{border-radius:8px}
 .toggle,.btn{border-radius:8px}
-.tbl tr.pick td:first-child{box-shadow:inset 2px 0 0 var(--clay)}
-.result{border-left-color:var(--clay)}
+.tbl tr.pick td:first-child{box-shadow:inset 2px 0 0 var(--blue)}
+.result{border-left-color:var(--blue)}
 .files,.foot{border-top-color:var(--rule)}
 .pager{border-top-color:var(--rule)}
 
