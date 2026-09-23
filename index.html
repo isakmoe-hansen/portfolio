@@ -431,7 +431,6 @@ const CONTENT = {
   "contact": {
     "title": "Contact",
     "h1": "Get in touch",
-    "lede": "The quickest way to reach me is by email. I am also on LinkedIn.",
     "emailLabel": "Email",
     "linkedinLabel": "LinkedIn"
   },
@@ -1093,7 +1092,6 @@ function pageContact() {
   const s = C.site;
   return "<article>" +
     ed("contact.h1", "h1") +
-    ed("contact.lede", "p", "lede") +
     '<div class="contact-list">' +
       '<a class="contact-row" href="mailto:' + s.email + '">' +
         ed("contact.emailLabel", "span", "contact-key") +
