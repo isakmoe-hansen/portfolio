@@ -262,6 +262,16 @@ figcaption b{color:var(--ink);font-weight:500}
   border:1px solid var(--rule);background:#fff;
 }
 
+/* ---------- contact --------------------------------------- */
+.contact-list{margin-top:2.5rem;border-top:1px solid var(--ink);max-width:46rem}
+.contact-row{display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr);gap:.4rem 2.5rem;align-items:baseline;padding:1.4rem 0;border-bottom:1px solid var(--rule);color:var(--ink);text-decoration:none;transition:background 140ms ease}
+.contact-row:hover{background:var(--wash)}
+.contact-key{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.contact-val{font-size:1.3rem;overflow-wrap:anywhere}
+.contact-val .arr{display:inline-block;transition:transform 140ms ease}
+.contact-row:hover .contact-val .arr{transform:translateX(4px)}
+@media (max-width:46rem){.contact-row{grid-template-columns:1fr}.contact-val{font-size:1.1rem}}
+
 /* ---------- CV -------------------------------------------- */
 .cv-entry{padding:1.5rem 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr);gap:.5rem 2.5rem}
 .cv-when{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:.25rem}
@@ -339,6 +349,8 @@ body.editing .entry [data-edit]{pointer-events:auto}
   .cv-entry{grid-template-columns:1fr;gap:.35rem}
   .courses{column-count:1}
   .masthead{padding-top:1.5rem;position:static}
+  .masthead nav{gap:.85rem;font-size:.9rem}
+  .masthead nav a:last-child{padding:.4rem .75rem}
   .pager{flex-direction:column;gap:.7rem}
   .pager a:last-child{text-align:left}
 }
@@ -412,8 +424,17 @@ const CONTENT = {
     { "page": "about",      "label": "About" },
     { "page": "work",       "label": "Projects" },
     { "page": "experience", "label": "Experience" },
-    { "page": "cv",         "label": "CV" }
+    { "page": "cv",         "label": "CV" },
+    { "page": "contact",    "label": "Contact" }
   ],
+
+  "contact": {
+    "title": "Contact",
+    "h1": "Get in touch",
+    "lede": "The quickest way to reach me is by email. I am also on LinkedIn.",
+    "emailLabel": "Email",
+    "linkedinLabel": "LinkedIn"
+  },
 
   "index": {
     "title": "Isak Moe-Hansen — Drilling and production technology",
@@ -1068,6 +1089,22 @@ function expGroup(path, items) {
   }).join("") + "</div>";
 }
 
+function pageContact() {
+  const s = C.site;
+  return "<article>" +
+    ed("contact.h1", "h1") +
+    ed("contact.lede", "p", "lede") +
+    '<div class="contact-list">' +
+      '<a class="contact-row" href="mailto:' + s.email + '">' +
+        ed("contact.emailLabel", "span", "contact-key") +
+        '<span class="contact-val">' + s.email + '&nbsp;<span class="arr" aria-hidden="true">→</span></span></a>' +
+      '<a class="contact-row" href="' + s.linkedin + '">' +
+        ed("contact.linkedinLabel", "span", "contact-key") +
+        '<span class="contact-val">' + s.linkedinLabel + '&nbsp;<span class="arr" aria-hidden="true">→</span></span></a>' +
+    "</div>" +
+  "</article>";
+}
+
 function pageExperience() {
   const x = C.experience;
   return "<article>" +
@@ -1403,6 +1440,8 @@ function route() {
     page = "experience"; html = pageExperience(); title = C.experience.title + " — " + C.site.name;
   } else if (hash === "projects") {
     html = pageWork(); title = "Projects — " + C.site.name;
+  } else if (hash === "contact") {
+    page = "contact"; html = pageContact(); title = C.contact.title + " — " + C.site.name;
   } else if (hash === "cv") {
     page = "cv"; html = pageCV(); title = C.cv.title + " — " + C.site.name;
   } else {
